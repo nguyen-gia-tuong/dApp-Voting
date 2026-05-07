@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dApp Voting — Bầu chọn phi tập trung</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Toast container (thông báo góc phải) ─────────────────────────────── -->
+  <div id="toast-container"></div>
+
+  <div class="page-wrapper">
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         HEADER
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <header class="header">
+      <div class="header-brand">
+        <span class="brand-icon">🗳️</span>
+        <div>
+          <div class="brand-title">dApp Voting</div>
+          <div class="brand-sub">Ethereum · Decentralized · Transparent</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button id="btn-connect" class="btn btn-outline" onclick="connectWallet()">
+          🔌 Kết nối MetaMask
+        </button>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         THÔNG TIN VÍ
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <div class="wallet-bar">
+      <div class="wallet-left">
+        <span class="wallet-dot" id="wallet-dot"></span>
+        <div>
+          <div class="wallet-label">Địa chỉ ví của bạn</div>
+          <div class="wallet-address" id="wallet-address">Chưa kết nối</div>
+        </div>
+      </div>
+      <span class="badge" id="vote-status-badge">Chưa bỏ phiếu</span>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         BANNER TRẠNG THÁI BẦU CỬ
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <div class="election-banner" id="election-banner" style="display:none;">
+      <span id="banner-icon">⏳</span>
+      <span id="banner-text">Đang tải trạng thái bầu cử...</span>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         THỐNG KÊ
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="total-votes">—</div>
+        <div class="stat-label">Tổng phiếu</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="candidate-count">—</div>
+        <div class="stat-label">Ứng viên</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num mono" id="countdown" style="font-size:1rem;">—</div>
+        <div class="stat-label">Thời gian còn lại</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         BẢNG KẾT QUẢ
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <section class="card">
+      <div class="card-header">
+        <div class="section-title">📋 Kết quả bầu cử</div>
+        <span class="badge-outline" id="candidate-count-badge">0 ứng viên</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Ứng viên</th>
+              <th>Số phiếu</th>
+              <th>Tỉ lệ</th>
+            </tr>
+          </thead>
+          <tbody id="candidates-tbody">
+            <tr>
+              <td colspan="4" class="empty-cell">
+                Kết nối ví để xem danh sách ứng viên...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         FORM BỎ PHIẾU
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <section class="card" id="vote-form-section">
+      <div class="section-title" style="margin-bottom:16px;">✍️ Bỏ phiếu</div>
+
+      <div class="vote-form">
+        <div class="form-group">
+          <label for="candidate-select">Chọn ứng viên</label>
+          <select id="candidate-select">
+            <option value="">— Chọn ứng viên —</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="btn-vote" onclick="castVote()">
+          🗳️ Bỏ Phiếu
+        </button>
+      </div>
+
+      <p class="vote-notice">
+        ⚠️ Mỗi ví chỉ được bỏ phiếu một lần. Giao dịch sẽ yêu cầu phí gas.
+      </p>
+    </section>
+
+    <!-- Thông báo đã bỏ phiếu (ẩn mặc định) -->
+    <div class="voted-msg" id="voted-message" style="display:none;">
+      ✅ <strong>Bạn đã bỏ phiếu thành công.</strong>
+      Phiếu của bạn đã được ghi nhận vĩnh viễn trên blockchain.
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════════
+         LỊCH SỬ GIAO DỊCH (★ Phần xử lý sự kiện)
+    ══════════════════════════════════════════════════════════════════════════ -->
+    <section class="card">
+      <div class="card-header">
+        <div class="section-title">📜 Lịch sử giao dịch</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span class="badge-outline" id="tx-count">0 giao dịch</span>
+          <button class="btn btn-sm" onclick="refreshHistory()">↻ Tải lại</button>
+        </div>
+      </div>
+
+      <!-- Container này do eventHandler.js quản lý -->
+      <div id="tx-list">
+        <div class="tx-empty">Kết nối ví để xem lịch sử giao dịch.</div>
+      </div>
+    </section>
+
+  </div><!-- /page-wrapper -->
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       SCRIPTS
+       Thứ tự quan trọng: ethers → contract-config → eventHandler → app
+  ══════════════════════════════════════════════════════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+  <script src="contract-config.js"></script>
+  <script src="eventHandler.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
