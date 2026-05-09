@@ -29,3 +29,26 @@
 
 # Snapshot cheatcodes output
 /snapshots
+
+# Hardhat node runtime log
+hardhat-node.log
+
+# Hardhat v3 build output (contract-config.js generated artifact stays in repo)
+/build
+
+# Local backups (snapshot trước khi update lớn — keep local only, không push)
+/backups
+*.backup-*
+*-classic.*
+index.backup-*
+
+# Claude Code workspace — user-specific config, không commit
+.claude/
+".claude copy/"
+".gitignore copy"
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
