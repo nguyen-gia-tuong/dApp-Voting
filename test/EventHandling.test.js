@@ -82,7 +82,7 @@ describe("===== EVENT HANDLING — dApp Voting =====", function () {
       expect(events[1].args[0]).to.equal(3n); // voter2 → candidate 3
       expect(events[2].args[0]).to.equal(5n); // voter3 → candidate 5
 
-      console.log("\n  📋 Lịch sử votedEvent:");
+      console.log("\n   Lịch sử votedEvent:");
       for (const ev of events) {
         console.log(
           `     Block #${ev.blockNumber} | candidateId = ${ev.args[0]} | tx = ${ev.transactionHash.slice(0, 18)}...`
@@ -101,7 +101,7 @@ describe("===== EVENT HANDLING — dApp Voting =====", function () {
 
       expect(events.length).to.equal(2); // voter1 và voter3 đều vote cho ứng viên 1
 
-      console.log("\n  📋 votedEvent chỉ cho candidate #1:");
+      console.log("\n   votedEvent chỉ cho candidate #1:");
       for (const ev of events) {
         console.log(`     Block #${ev.blockNumber} | candidateId = ${ev.args[0]}`);
       }
@@ -119,7 +119,7 @@ describe("===== EVENT HANDLING — dApp Voting =====", function () {
       // Constructor add 5 ứng viên => 5 events
       expect(events.length).to.equal(5);
 
-      console.log("\n  📋 CandidateAdded từ constructor:");
+      console.log("\n   CandidateAdded từ constructor:");
       for (const ev of events) {
         console.log(`     id=${ev.args[0]} | name="${ev.args[1]}"`);
       }
@@ -151,7 +151,7 @@ describe("===== EVENT HANDLING — dApp Voting =====", function () {
       const last = events[events.length - 1];
       expect(last.args[1]).to.equal("Ung Vien B");
 
-      console.log("\n  📋 Tất cả CandidateAdded:");
+      console.log("\n   Tất cả CandidateAdded:");
       for (const ev of events) {
         console.log(`     id=${ev.args[0]} | name="${ev.args[1]}"`);
       }
@@ -194,7 +194,7 @@ describe("===== EVENT HANDLING — dApp Voting =====", function () {
       expect(events[0].args[1]).to.equal("Dinh Manh Duc");
       expect(events[1].args[1]).to.equal("Nguyen Ngoc Thuy");
 
-      console.log("\n  📋 CandidateRemoved:");
+      console.log("\n   CandidateRemoved:");
       for (const ev of events) {
         console.log(`     id=${ev.args[0]} | name="${ev.args[1]}"`);
       }
@@ -245,7 +245,7 @@ describe("===== EVENT HANDLING — dApp Voting =====", function () {
       expect(events[0].args[0]).to.equal(BigInt(st));
       expect(events[0].args[1]).to.equal(BigInt(et));
 
-      console.log("\n  📋 VotingTimeSet:");
+      console.log("\n   VotingTimeSet:");
       console.log(`     startTime=${events[0].args[0]} | endTime=${events[0].args[1]}`);
     });
   });
@@ -277,7 +277,7 @@ describe("===== EVENT HANDLING — dApp Voting =====", function () {
       expect(emittedAddresses).to.include(voter2.address);
       expect(emittedAddresses).to.include(voter3.address);
 
-      console.log("\n  📋 VoterWhitelisted (batch):");
+      console.log("\n   VoterWhitelisted (batch):");
       for (const ev of events) {
         console.log(`     voter = ${ev.args[0]}`);
       }
@@ -335,7 +335,7 @@ describe("===== EVENT HANDLING — dApp Voting =====", function () {
       expect(events[0].args[0]).to.equal(voter1.address);
       expect(events[1].args[0]).to.equal(voter2.address);
 
-      console.log("\n  📋 VoterRemovedFromWhitelist:");
+      console.log("\n   VoterRemovedFromWhitelist:");
       for (const ev of events) {
         console.log(`     voter = ${ev.args[0]}`);
       }
