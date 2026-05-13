@@ -8,13 +8,13 @@
 
 ## 👥 Thông tin nhóm F
 
-| Họ và tên | MSSV | Vai trò đóng góp |
-| --- | --- | --- |
-| **Đinh Mạnh Đức** | — | Test |
-| **Nguyễn Gia Tường** | — | Smart Contract |
-| **Nguyễn Ngọc Thuỷ** | — | Báo cáo kỹ thuật |
-| **Trương Hoàng Khang** | — | Xử lý sự kiện |
-| **Trần Bùi Hoàng Kim** | — | Frontend |
+| Họ và tên | Vai trò đóng góp |
+| --- | --- |
+| **Đinh Mạnh Đức** | Test |
+| **Nguyễn Gia Tường** | Smart Contract |
+| **Nguyễn Ngọc Thuỷ** | Báo cáo kỹ thuật |
+| **Trương Hoàng Khang** | Xử lý sự kiện |
+| **Trần Bùi Hoàng Kim** | Frontend |
 
 ---
 
