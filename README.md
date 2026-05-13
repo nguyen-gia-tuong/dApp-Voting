@@ -10,7 +10,7 @@
 
 | Họ và tên | Vai trò đóng góp |
 | --- | --- |
-| **Đinh Mạnh Đức** | Test |
+| **Đinh Mạnh Đức** | Test case |
 | **Nguyễn Gia Tường** | Smart Contract |
 | **Nguyễn Ngọc Thuỷ** | Báo cáo kỹ thuật |
 | **Trương Hoàng Khang** | Xử lý sự kiện |
