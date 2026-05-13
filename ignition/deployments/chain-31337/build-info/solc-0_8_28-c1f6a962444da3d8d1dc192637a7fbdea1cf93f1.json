@@ -1,0 +1,49 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-c1f6a962444da3d8d1dc192637a7fbdea1cf93f1",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "compilerType": "solc",
+  "toolVersions": {
+    "hardhat": "3.4.2"
+  },
+  "userSourceNameMap": {
+    "contracts/Voting.sol": "project/contracts/Voting.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/Voting.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.28;\r\n\r\ncontract Voting {\r\n\r\n    struct Candidate {\r\n        uint id;\r\n        string name;\r\n        uint voteCount;\r\n        bool exists;\r\n    }\r\n\r\n    address public owner;\r\n    uint public candidatesCount;\r\n    mapping(uint => Candidate) public candidates;\r\n    mapping(address => bool) public hasVoted;\r\n\r\n    uint public startTime;\r\n    uint public endTime;\r\n    bool public timingEnabled;\r\n\r\n    mapping(address => bool) public isWhitelisted;\r\n    bool public whitelistEnabled;\r\n\r\n    event votedEvent(uint indexed _candidateId);\r\n    event CandidateAdded(uint indexed id, string name);\r\n    event CandidateRemoved(uint indexed id, string name);\r\n    event VotingTimeSet(uint startTime, uint endTime);\r\n    event VoterWhitelisted(address indexed voter);\r\n    event VoterRemovedFromWhitelist(address indexed voter);\r\n\r\n    modifier onlyOwner() {\r\n        require(msg.sender == owner, \"Voting: chi owner moi duoc thuc hien\");\r\n        _;\r\n    }\r\n\r\n    modifier votingOpen() {\r\n        if (timingEnabled) {\r\n            require(block.timestamp >= startTime, \"Voting: chua den thoi gian bo phieu\");\r\n            require(block.timestamp <= endTime, \"Voting: da het thoi gian bo phieu\");\r\n        }\r\n        _;\r\n    }\r\n\r\n    modifier onlyWhitelisted() {\r\n        if (whitelistEnabled) {\r\n            require(isWhitelisted[msg.sender], \"Voting: ban khong co trong danh sach cu tri\");\r\n        }\r\n        _;\r\n    }\r\n\r\n    constructor() {\r\n        owner = msg.sender;\r\n        _addCandidate(\"Dinh Manh Duc\");\r\n        _addCandidate(\"Nguyen Gia Tuong\");\r\n        _addCandidate(\"Nguyen Ngoc Thuy\");\r\n        _addCandidate(\"Truong Hoang Khang\");\r\n        _addCandidate(\"Tran Bui Hoang Kim\");\r\n    }\r\n\r\n    function _addCandidate(string memory _name) internal {\r\n        candidatesCount++;\r\n        candidates[candidatesCount] = Candidate({\r\n            id: candidatesCount,\r\n            name: _name,\r\n            voteCount: 0,\r\n            exists: true\r\n        });\r\n        emit CandidateAdded(candidatesCount, _name);\r\n    }\r\n\r\n    function addCandidate(string memory _name) external onlyOwner {\r\n        require(bytes(_name).length > 0, \"Voting: ten ung vien khong duoc rong\");\r\n        if (timingEnabled && block.timestamp >= startTime && block.timestamp <= endTime) {\r\n            revert(\"Voting: khong the them ung vien khi dang trong ky bau cu\");\r\n        }\r\n        _addCandidate(_name);\r\n    }\r\n\r\n    function removeCandidate(uint _candidateId) external onlyOwner {\r\n        require(_candidateId > 0 && _candidateId <= candidatesCount, \"Voting: id ung vien khong hop le\");\r\n        require(candidates[_candidateId].exists, \"Voting: ung vien da bi xoa truoc do\");\r\n        if (timingEnabled && block.timestamp >= startTime && block.timestamp <= endTime) {\r\n            revert(\"Voting: khong the xoa ung vien khi dang trong ky bau cu\");\r\n        }\r\n        string memory removedName = candidates[_candidateId].name;\r\n        candidates[_candidateId].exists = false;\r\n        emit CandidateRemoved(_candidateId, removedName);\r\n    }\r\n\r\n    function setVotingTime(uint _startTime, uint _endTime) external onlyOwner {\r\n        require(_startTime < _endTime, \"Voting: startTime phai truoc endTime\");\r\n        require(_endTime > block.timestamp, \"Voting: endTime phai trong tuong lai\");\r\n        startTime = _startTime;\r\n        endTime = _endTime;\r\n        timingEnabled = true;\r\n        emit VotingTimeSet(_startTime, _endTime);\r\n    }\r\n\r\n    function setTimingEnabled(bool _enabled) external onlyOwner {\r\n        timingEnabled = _enabled;\r\n    }\r\n\r\n    function setWhitelistEnabled(bool _enabled) external onlyOwner {\r\n        whitelistEnabled = _enabled;\r\n    }\r\n\r\n    function addToWhitelist(address _voter) external onlyOwner {\r\n        require(_voter != address(0), \"Voting: dia chi khong hop le\");\r\n        isWhitelisted[_voter] = true;\r\n        emit VoterWhitelisted(_voter);\r\n    }\r\n\r\n    function addBatchToWhitelist(address[] calldata _voters) external onlyOwner {\r\n        for (uint i = 0; i < _voters.length; i++) {\r\n            require(_voters[i] != address(0), \"Voting: dia chi trong mang khong hop le\");\r\n            isWhitelisted[_voters[i]] = true;\r\n            emit VoterWhitelisted(_voters[i]);\r\n        }\r\n    }\r\n\r\n    function removeFromWhitelist(address _voter) external onlyOwner {\r\n        isWhitelisted[_voter] = false;\r\n        emit VoterRemovedFromWhitelist(_voter);\r\n    }\r\n\r\n    function vote(uint _candidateId) external votingOpen onlyWhitelisted {\r\n        require(!hasVoted[msg.sender], \"Voting: ban da bo phieu roi\");\r\n        require(_candidateId > 0 && _candidateId <= candidatesCount, \"Voting: id ung vien khong hop le\");\r\n        require(candidates[_candidateId].exists, \"Voting: ung vien nay khong ton tai\");\r\n\r\n        hasVoted[msg.sender] = true;\r\n        candidates[_candidateId].voteCount++;\r\n\r\n        emit votedEvent(_candidateId);\r\n    }\r\n\r\n    function getVotingStatus() external view returns (string memory) {\r\n        if (!timingEnabled) return \"KHONG_GIOI_HAN\";\r\n        if (block.timestamp < startTime) return \"CHUA_MO\";\r\n        if (block.timestamp <= endTime) return \"DANG_MO\";\r\n        return \"DA_KET_THUC\";\r\n    }\r\n\r\n    function isVotingOpen() external view returns (bool) {\r\n        if (!timingEnabled) return true;\r\n        return (block.timestamp >= startTime && block.timestamp <= endTime);\r\n    }\r\n\r\n    function getCandidate(uint _candidateId) external view returns (uint id, string memory name, uint voteCount, bool exists) {\r\n        require(_candidateId > 0 && _candidateId <= candidatesCount, \"Voting: id khong hop le\");\r\n        Candidate storage c = candidates[_candidateId];\r\n        return (c.id, c.name, c.voteCount, c.exists);\r\n    }\r\n\r\n    function getAllCandidates() external view returns (Candidate[] memory) {\r\n        uint activeCount = 0;\r\n        for (uint i = 1; i <= candidatesCount; i++) {\r\n            if (candidates[i].exists) activeCount++;\r\n        }\r\n\r\n        Candidate[] memory result = new Candidate[](activeCount);\r\n        uint idx = 0;\r\n        for (uint i = 1; i <= candidatesCount; i++) {\r\n            if (candidates[i].exists) {\r\n                result[idx] = candidates[i];\r\n                idx++;\r\n            }\r\n        }\r\n        return result;\r\n    }\r\n\r\n    function getVoteCount(uint _candidateId) external view returns (uint) {\r\n        require(_candidateId > 0 && _candidateId <= candidatesCount, \"Voting: id khong hop le\");\r\n        require(candidates[_candidateId].exists, \"Voting: ung vien khong ton tai\");\r\n        return candidates[_candidateId].voteCount;\r\n    }\r\n\r\n    function checkHasVoted(address _voter) external view returns (bool) {\r\n        return hasVoted[_voter];\r\n    }\r\n\r\n    function getContractInfo() external view returns (address _owner, uint _candidatesCount, bool _timingEnabled, uint _startTime, uint _endTime, bool _whitelistEnabled, string memory _votingStatus) {\r\n        string memory status;\r\n        if (!timingEnabled) status = \"KHONG_GIOI_HAN\";\r\n        else if (block.timestamp < startTime) status = \"CHUA_MO\";\r\n        else if (block.timestamp <= endTime) status = \"DANG_MO\";\r\n        else status = \"DA_KET_THUC\";\r\n\r\n        return (owner, candidatesCount, timingEnabled, startTime, endTime, whitelistEnabled, status);\r\n    }\r\n}"
+      }
+    }
+  }
+}
