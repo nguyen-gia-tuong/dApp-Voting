@@ -60,7 +60,7 @@ npx hardhat node
 Mở một Terminal khác và thực hiện deploy hợp đồng lên mạng localhost:
 
 ```bash
-npx hardhat ignition deploy ignition/modules/Voting.js --network localhost
+npx hardhat ignition deploy ignition/modules/Voting.cjs --network localhost
 
 ```
 
