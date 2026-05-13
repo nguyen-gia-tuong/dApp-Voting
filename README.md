@@ -107,4 +107,12 @@ npx hardhat ignition deploy ignition/modules/Voting.cjs --network localhost
 
 ---
 
+## 🎬 Video demo
+
+* **Độ dài**: 5 – 10 phút, quay màn hình có thuyết minh.
+* **Nội dung**: giới thiệu nhóm, demo các chức năng (deploy, vote từ 2-3 account khác nhau, test double-vote thất bại), giải thích nhanh kiến trúc.
+* **Link demo giao diện**: [Xem trên Google Drive](https://drive.google.com/file/d/167USnG9bnebJYtbeZ2ndeFGrWd4zD9CR/view?usp=sharing)
+
+---
+
 **VoteChain Nhóm F** — Bài tập môn Công nghệ chuỗi khối · UEH 2026
